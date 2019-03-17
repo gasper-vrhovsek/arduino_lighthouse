@@ -20,12 +20,11 @@ int flashAmount = 20;
 int minValue = 1;
 int maxValue = 255;
 int flashCount = 1;
+int flashes = 3;
 int flashLimit = 35;
 
 // stages
 int stage = 0;
-
-
 
 void setup() {
 //  pinMode(LED_BUILTIN, OUTPUT);
@@ -47,13 +46,20 @@ void loop() {
     // first flash up
     brightness = min(brightness + flashAmount, maxValue);
     delay(20);
-  }
+  } 
 
   if (stage == 2) {
-    // first flash down
+    // last flash down
     brightness = max(brightness - flashAmount, flashLimit);
     delay(20);
   }
+
+  if (stage == 22) {
+    // middle flash down
+    brightness = max(brightness - flashAmount, minValue);
+    delay(20);
+  }
+  
   if (stage == 3) {
     // ramp down
     brightness = max(brightness - fadeAmount, minValue); 
@@ -62,21 +68,31 @@ void loop() {
 
   // write led
   analogWrite(led, brightness);
-
-
+  
   // check state
   if (stage == 0 && brightness == flashLimit) {
     // set stage to first flash
     stage = 1;        
   }
   if (stage == 1 && brightness == maxValue) {
-    stage = 2;  
+    if (flashCount < flashes) {
+      stage = 22;  
+    } else {
+      stage = 2;    
+    }
   }
+
+  if(stage == 22 && brightness == minValue) {
+    stage = 1;
+    flashCount = flashCount + 1;
+    delay(1500);
+  }
+  
   if(stage == 2 && brightness == flashLimit) {
-    if (flashCount == 1) {
+    if (flashCount < flashes) {
       stage = 1;
       flashCount = flashCount + 1;
-      delay(600);
+      delay(1500);
     } else {
       stage = 3;  
       flashCount = 1;
@@ -86,53 +102,4 @@ void loop() {
     stage = 0;
     delay(6000);
   }
-
-
-
-
-
-
-//  
-//  if (brightness < flashLimit) {
-//    brightness = brightness + fadeAmount;
-//    delay(50);
-//  } else {
-//    brightness = brightness + flashAmount;
-//    delay(20);
-//  }
-//
-//  // check limits
-//  if (brightness >= maxValue) {
-//    brightness = maxValue;  
-//  }
-//  if (brightness <= minValue) {
-//    brightness = minValue;
-//    analogWrite(led, brightness);
-//    //delay(10000);
-//    delay(1000);
-//  }
-//  analogWrite(led, brightness);
-//
-//
-//  if (brightness >= maxValue) {
-////    fadeAmount = -fadeAmount;
-//    flashAmount = -flashAmount;
-//    
-//  }
-//  
-//  if (flashCount == 1 && flashAmount < 0 && brightness <= flashLimit) {
-//      // reverse direction for second flash
-//      flashAmount = -flashAmount;
-//      fadeAmount = -fadeAmount;
-//      flashCount == 2;
-//  } 
-//  if (brightness <= minValue) {
-//    // reverse the direction of the fading at the ends of the fade
-//    fadeAmount = -fadeAmount;
-//    flashAmount = -flashAmount;
-//
-//    if (brightness <= 0) {
-//      flashCount = 1;  
-//    }
-//  }
 }
