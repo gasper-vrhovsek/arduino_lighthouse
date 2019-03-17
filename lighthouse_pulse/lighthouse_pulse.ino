@@ -20,8 +20,8 @@ int flashAmount = 20;
 int minValue = 1;
 int maxValue = 255;
 int flashCount = 1;
-int flashes = 3;
-int flashLimit = 35;
+int flashes = 2;
+int flashLimit = 12;
 
 // stages
 int stage = 0;
@@ -39,7 +39,7 @@ void loop() {
   if (stage == 0) {
     // ramp up
     brightness = min(brightness + fadeAmount, flashLimit);
-    delay(50);  
+    delay(80);  
   }
 
   if (stage == 1) {
@@ -56,14 +56,14 @@ void loop() {
 
   if (stage == 22) {
     // middle flash down
-    brightness = max(brightness - flashAmount, minValue);
+    brightness = max(brightness - flashAmount, flashLimit);
     delay(20);
   }
   
   if (stage == 3) {
     // ramp down
     brightness = max(brightness - fadeAmount, minValue); 
-    delay(50);
+    delay(80);
   }
 
   // write led
@@ -82,7 +82,7 @@ void loop() {
     }
   }
 
-  if(stage == 22 && brightness == minValue) {
+  if(stage == 22 && brightness == flashLimit) {
     stage = 1;
     flashCount = flashCount + 1;
     delay(1500);
@@ -100,6 +100,6 @@ void loop() {
   }
   if(stage == 3 && brightness == minValue) {
     stage = 0;
-    delay(6000);
+    delay(4000);
   }
 }
